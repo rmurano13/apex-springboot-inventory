@@ -2,6 +2,7 @@ package com.apex.eqp.inventory;
 
 import com.apex.eqp.inventory.entities.Product;
 import com.apex.eqp.inventory.entities.RecalledProduct;
+import com.apex.eqp.inventory.repositories.RecalledProductRepository;
 import com.apex.eqp.inventory.services.ProductService;
 import com.apex.eqp.inventory.services.RecalledProductService;
 import org.junit.jupiter.api.Assertions;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @SpringBootTest
@@ -20,6 +23,9 @@ class ProductServiceTests {
 
     @Autowired
     RecalledProductService recalledProductService;
+    
+    @Autowired
+    RecalledProductRepository recalledProductRepo;
 
     /**
      * Helper method to create test products
@@ -68,5 +74,28 @@ class ProductServiceTests {
         productService.save(loadedProduct);
 
         Assertions.assertNotNull(productService.findById(loadedProduct.getId()).orElse(null));
+    }
+    
+    @Test
+    void getAllNonRecalledProducts() {
+    	recalledProductRepo.save(createTestRecalledProduct("Recalled-One"));
+    	recalledProductRepo.save(createTestRecalledProduct("Recalled-Two"));
+    	
+    	productService.save(createTestProduct("Non-Recalled",10.1, 3));
+    	productService.save(createTestProduct("Recalled-One",10.1, 3));
+    	
+    	Collection<Product> nonRecalledProducts = productService.getAllProduct();
+    	
+    	HashSet<String> recalledSet = new HashSet<>();
+    	recalledSet.add("Recalled-One");
+    	recalledSet.add("Recalled-Two");
+    	
+    	for(Product product: nonRecalledProducts) {
+    		Assertions.assertFalse(recalledSet.contains(product.getName()));
+    		Assertions.assertEquals("Non-Recalled", product.getName());
+    	}
+    	
+    	
+    	
     }
 }

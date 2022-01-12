@@ -4,6 +4,8 @@ import com.apex.eqp.inventory.entities.Product;
 import com.apex.eqp.inventory.entities.RecalledProduct;
 import com.apex.eqp.inventory.services.ProductService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +30,13 @@ public class InventoryController {
      */
     @GetMapping
     public ResponseEntity<Collection<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProduct());
+    	
+    	Collection<Product> nonRecalledProducts = productService.getAllProduct();
+    	
+    	if(nonRecalledProducts!=null && !nonRecalledProducts.isEmpty())
+    		return ResponseEntity.ok(productService.getAllProduct());
+    	else
+    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @PostMapping

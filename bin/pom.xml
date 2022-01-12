@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.apex.eqp</groupId>
     <artifactId>Inventory</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>inventory</name>
     <description>Demo project for Spring Boot</description>
 
